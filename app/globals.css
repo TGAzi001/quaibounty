@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@theme inline {
+  --font-sans: 'Inter', 'Inter Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+}
+:root { color-scheme: light; --background: #f8faf9; --foreground: #111827; --card: #ffffff; --card-foreground: #111827; --primary: #16b879; --primary-foreground: #ffffff; --muted: #eef3f0; --muted-foreground: #667085; --border: #e2eae6; --ring: #16b879; }
+* { border-color: var(--border); }
+html { scroll-behavior: smooth; background: var(--background); }
+body { @apply bg-background text-foreground font-sans antialiased; }
+::selection { background: #b9f2dc; color: #071512; }
+:focus-visible { outline: 3px solid #9ae8c7; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+.dotted-grid { background-image: radial-gradient(#bdd4c9 1px, transparent 1px); background-size: 18px 18px; }
+.code-grid { background-image: linear-gradient(#dbe8e2 1px, transparent 1px), linear-gradient(90deg, #dbe8e2 1px, transparent 1px); background-size: 32px 32px; }
+.card-shadow { box-shadow: 0 18px 50px rgba(7, 21, 18, .07); }
+@keyframes pulse-line { 0%,100% { opacity:.35 } 50% { opacity:1 } }
+.pulse-line { animation: pulse-line 2.2s ease-in-out infinite; }
+[data-slot='button'] { cursor: pointer; }
+@layer utilities { .text-balance { text-wrap: balance; } }
+
+.dark { color-scheme: dark; --background: #071512; --foreground: #f3faf7; --card: #0d1f1a; --card-foreground: #f3faf7; --muted: #17362d; --muted-foreground: #a1b6ae; --border: #23473b; --primary: #36d293; --primary-foreground: #071512; }
+.dark body { background: var(--background); }
+
+.nav-link { color: #667a72; font-size: .875rem; font-weight: 500; transition: color .2s; }
+.nav-link:hover { color: #111827; }
+.dark .nav-link { color: #a1b6ae; }
+.dark .nav-link:hover { color: #f3faf7; }
+.section-label { color: #16b879; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.dark .section-label { color: #36d293; }
+.surface-dark { background: #071512; color: #f3faf7; }
+.green-wash { background: #e9f8f1; }
+.dark .green-wash { background: #0d1f1a; }
+.card-hover { transition: transform .2s, box-shadow .2s, border-color .2s; }
+.card-hover:hover { transform: translateY(-3px); box-shadow: 0 18px 45px rgba(7,21,18,.10); border-color: #9bd9bd; }
+@media (max-width: 640px) { .section-pad { padding-top: 4.5rem; padding-bottom: 4.5rem; } }
+@media (min-width: 641px) { .section-pad { padding-top: 7rem; padding-bottom: 7rem; } }
+
+/* dashboard shell */
+.dashboard-surface { background: #f4f7f5; }
+.dark .dashboard-surface { background: #071512; }
+.sidebar-link { display:flex; align-items:center; gap:.7rem; border-radius:.65rem; padding:.65rem .75rem; color:#667a72; font-size:.875rem; font-weight:500; }
+.sidebar-link:hover, .sidebar-link.active { background:#e5f5ed; color:#08784d; }
+.dark .sidebar-link { color:#a1b6ae; }
+.dark .sidebar-link:hover, .dark .sidebar-link.active { background:#17362d; color:#75e4b3; }
+.metric-number { letter-spacing:-.05em; font-size:1.8rem; font-weight:700; }
+.status-badge { display:inline-flex; align-items:center; border-radius:999px; padding:.25rem .55rem; font-size:.6875rem; font-weight:700; line-height:1; text-transform:uppercase; letter-spacing:.04em; }
+.status-green { background:#e3f7ed; color:#08784d; }
+.status-blue { background:#e7f0ff; color:#2563a8; }
+.status-neutral { background:#eef3f0; color:#667a72; }
+.status-red { background:#feecec; color:#b42318; }
