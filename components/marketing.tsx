@@ -715,7 +715,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mx-auto max-w-7xl border-t border-[#23473b] px-4 py-5 text-xs text-[#667a72] sm:px-6 lg:px-8">
-          © 2026 QuaiBounty. Built for the open source economy
+          © 2026 QuaiBounty. Built for the open source economy..
         </div>
       </footer>
     </>
