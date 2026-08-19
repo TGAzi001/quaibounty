@@ -2,7 +2,6 @@ import { App } from "@octokit/app";
 import { firebaseService } from '../services/firebaseService.js';
 import { quais, solidityPackedKeccak256 } from "quais";
 import bountySchema from "../models/bountySchema.js";
-import EscrowJson from "../artifacts/contractAbi.json";
 import { generateRandomId } from "../services/idService.js";
 
 const DEFAULT_KEYWORDS = ["quaiBounty"] as const;
@@ -52,13 +51,58 @@ export function setupIssueHandlers(app: App) {
 
     console.log(`[Issue #${issueData.issueNumber}] Extracted Data:`, issueData);
 
+    const EscrowAbi = [
+      {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "repoIdHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "issueNumber",
+          "type": "uint64"
+        }
+      ],
+      "name": "createBounty",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "bountyId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "bountyId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          }
+        ],
+        "name": "resolve",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ]
+
     try {
       // call createBounty function
       const RPC_URL = process.env.RPC_URL!;
       const signer = process.env.SIGNER!;
       const provider = new quais.JsonRpcProvider(RPC_URL, undefined, { usePathing: true })
       const wallet = new quais.Wallet(signer, provider);
-      const Escrow = new quais.Contract("0x0041Dfeb51aFB837505568DEbf45114efD127009", EscrowJson.abi, wallet);
+      const Escrow = new quais.Contract("0x0041Dfeb51aFB837505568DEbf45114efD127009", EscrowAbi, wallet);
 
       const tx = await Escrow.createBounty(issueData.repoIdHash, issueData.issueNumber);
       await tx.wait();

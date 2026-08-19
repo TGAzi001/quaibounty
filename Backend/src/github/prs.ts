@@ -1,7 +1,6 @@
 import { App } from "@octokit/app";
 import { firebaseService } from '../services/firebaseService.js';
 import bountySchema from "../models/bountySchema.js";
-import EscrowJson from "../artifacts/contractAbi.json";
 import { quais } from "quais";
 import { qbuser } from "../models/userSchema.js";
 
@@ -55,6 +54,51 @@ export function setupPRHandlers(app: App): void {
     const userDoc = await firebaseService.getDocument<qbuser>('qbusers', userId);
     const userAddress = userDoc?.address;
 
+        const EscrowAbi = [
+      {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "repoIdHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "issueNumber",
+          "type": "uint64"
+        }
+      ],
+      "name": "createBounty",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "bountyId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "bountyId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          }
+        ],
+        "name": "resolve",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ]
+
     if (conflict) {
       console.warn(
         `[PR #${pr.number} Merged] Conflicting bountyId values in title vs body — skipping.`
@@ -94,7 +138,7 @@ export function setupPRHandlers(app: App): void {
       const signer = process.env.SIGNER!;
       const provider = new quais.JsonRpcProvider(RPC_URL, undefined, { usePathing: true })
       const wallet = new quais.Wallet(signer, provider);
-      const Escrow = new quais.Contract("0x0041Dfeb51aFB837505568DEbf45114efD127009", EscrowJson.abi, wallet);
+      const Escrow = new quais.Contract("0x0041Dfeb51aFB837505568DEbf45114efD127009", EscrowAbi, wallet);
 
       const tx = await Escrow.resolve(bountyId, userAddress);
       await tx.wait();
