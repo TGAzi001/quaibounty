@@ -1,0 +1,46 @@
+{
+    "abi": [
+        {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "repoIdHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "issueNumber",
+          "type": "uint64"
+        }
+      ],
+      "name": "createBounty",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "bountyId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "bountyId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
+      ],
+      "name": "resolve",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+]
+}

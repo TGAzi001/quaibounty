@@ -1,0 +1,47 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node --env-file=.env dist/server.js",
+    "dev": "tsx watch --env-file=.env src/server.ts",
+    "dev:signups": "tsx watch src/scripts/sendBulkEmails.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@octokit/app": "^16.1.4",
+    "axios": "^1.12.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.17.0",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.7.0",
+    "joi": "^17.10.1",
+    "jsonwebtoken": "^9.0.2",
+    "luxon": "^3.7.2",
+    "node-cron": "^3.0.2",
+    "opik": "^1.9.103",
+    "quais": "^1.0.0-alpha.56",
+    "resend": "^6.9.1",
+    "twitter-api-v2": "^1.29.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.20",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^20.8.0",
+    "@types/node-cron": "^3.0.8",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.2.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

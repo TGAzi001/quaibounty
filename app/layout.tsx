@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { WalletProvider } from '@/lib/wallet-context'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -14,5 +15,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { colorScheme: 'light', themeColor: '#f8faf9', width: 'device-width', initialScale: 1 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" className={inter.variable}><body>{children}{process.env.NODE_ENV === 'production' && <Analytics />}</body></html>
+  return (
+    <html lang="en" className={inter.variable}>
+      <body>
+        <WalletProvider>
+          {children}
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </WalletProvider>
+      </body>
+    </html>
+  )
 }

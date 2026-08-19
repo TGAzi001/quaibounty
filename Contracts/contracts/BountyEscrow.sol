@@ -11,7 +11,7 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
 /**
  * @title BountyEscrow
- * @notice USDC-based escrow for GitHub issue bounties with integrated fee vault.
+ * @notice escrow for GitHub issue bounties with integrated fee vault.
  *
  *         Sponsor funds a bounty; a designated resolver can settle to a recipient before the deadline;
  *         sponsors can cancel or refund after deadline. Owner sets fee params, can pause,
@@ -20,8 +20,8 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     using SafeERC20 for IERC20;
 
-    /// @notice Maximum protocol fee in basis points (1_000 = 10%).
-    uint16 public constant MAX_FEE_BPS = 1_000;
+    /// @notice Maximum protocol fee in basis points (200 = 2%).
+    uint16 public constant MAX_FEE_BPS = 200;
 
     /// @dev Basis point denominator (10_000 = 100%).
     uint256 private constant FEE_DENOM = 10_000;
@@ -37,17 +37,13 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     struct Bounty {
         bytes32 repoIdHash;
         address sponsor;
-        address resolver;
         uint96 amount;      // net bounty amount (paid in full to recipient)
-        uint64 deadline;
+        uint256 deadline;
         uint64 issueNumber;
         Status status;
     }
 
     // -------- Storage --------
-
-    IERC20 private immutable _usdc;
-    uint8 private immutable _usdcDecimals;
 
     /// @dev BountyId (keccak256(sponsor, repoIdHash, issueNumber)) → Bounty.
     mapping(bytes32 => Bounty) private _bounties;
@@ -68,8 +64,6 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
         address indexed sponsor,
         bytes32 indexed repoIdHash,
         uint64 issueNumber,
-        uint64 deadline,
-        address resolver,
         uint256 amount
     );
 
@@ -116,32 +110,18 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     error ZeroAmount();
     error NoFeesAvailable();
     error InsufficientFees();
-    error CannotRescueUsdc();
 
     // -------- Constructor --------
 
     /**
-     * @param usdc_ ERC-20 token address used for all escrowed transfers (intended USDC).
      * @param _feeBps Initial protocol fee in basis points (≤ MAX_FEE_BPS).
      * @param initialOwner Contract owner (admin for pause/fees/withdraw).
      */
     constructor(
-        address usdc_,
         uint16 _feeBps,
         address initialOwner
     ) Ownable(initialOwner) {
-        if (usdc_ == address(0) || initialOwner == address(0)) revert ZeroAddress();
         if (_feeBps > MAX_FEE_BPS) revert InvalidParams();
-
-        _usdc = IERC20(usdc_);
-
-        uint8 dec;
-        try IERC20Metadata(usdc_).decimals() returns (uint8 d) {
-            dec = d;
-        } catch {
-            dec = 6;
-        }
-        _usdcDecimals = dec;
 
         feeBps = _feeBps;
     }
@@ -149,19 +129,10 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     // -------- Pure / View Utilities --------
 
     function computeBountyId(
-        address sponsor,
         bytes32 repoIdHash,
         uint64 issueNumber
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(sponsor, repoIdHash, issueNumber));
-    }
-
-    function usdc() external view returns (address) {
-        return address(_usdc);
-    }
-
-    function usdcDecimals() external view returns (uint8) {
-        return _usdcDecimals;
+        return keccak256(abi.encodePacked(repoIdHash, issueNumber));
     }
 
     function getBounty(bytes32 bountyId) external view returns (Bounty memory) {
@@ -187,71 +158,45 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     // -------- Core Flows --------
 
     function createBounty(
-        address resolver,
         bytes32 repoIdHash,
-        uint64 issueNumber,
-        uint64 deadline,
-        uint256 amount
-    ) external nonReentrant whenNotPaused returns (bytes32 bountyId) {
-        if (resolver == address(0)) revert ZeroAddress();
+        uint64 issueNumber
+    ) external onlyOwner nonReentrant whenNotPaused returns (bytes32 bountyId) {
         if (repoIdHash == bytes32(0) || issueNumber == 0) revert InvalidParams();
-        if (deadline <= block.timestamp) revert InvalidParams();
-        if (amount == 0) revert ZeroAmount();
-        if (amount > type(uint96).max) revert InvalidParams();
 
-        bountyId = computeBountyId(msg.sender, repoIdHash, issueNumber);
+        bountyId = computeBountyId(repoIdHash, issueNumber);
         if (_bounties[bountyId].status != Status.None) revert AlreadyExists();
 
         Bounty storage b = _bounties[bountyId];
         b.repoIdHash = repoIdHash;
-        b.sponsor = msg.sender;
-        b.resolver = resolver;
-        b.amount = uint96(amount);
-        b.deadline = deadline;
+        b.sponsor = address(0);
+        b.deadline = block.timestamp + 30 days;
         b.issueNumber = issueNumber;
         b.status = Status.Open;
 
-        totalEscrowed += amount;
-
-        uint256 fee = (amount * feeBps) / FEE_DENOM;
-        uint256 totalRequired = amount + fee;
-
-        _usdc.safeTransferFrom(msg.sender, address(this), totalRequired);
-
-        if (fee > 0) {
-            totalFeesAccrued += fee;
-        }
-
         emit BountyCreated(
             bountyId,
-            msg.sender,
+            address(0),
             repoIdHash,
             issueNumber,
-            deadline,
-            resolver,
-            amount
+            0
         );
     }
 
     function fund(
-        bytes32 bountyId,
-        uint256 amount
-    ) external nonReentrant whenNotPaused {
+        bytes32 bountyId
+    ) external payable nonReentrant whenNotPaused {
         Bounty storage b = _bounties[bountyId];
         if (b.status != Status.Open) revert NotOpen();
-        if (msg.sender != b.sponsor) revert NotSponsor();
-        if (amount == 0) revert ZeroAmount();
 
-        uint256 newAmt = uint256(b.amount) + amount;
+        uint256 newAmt = uint256(b.amount) + msg.value;
         if (newAmt > type(uint96).max) revert InvalidParams();
         b.amount = uint96(newAmt);
+        b.sponsor = msg.sender;
 
-        totalEscrowed += amount;
+        totalEscrowed += msg.value;
 
-        uint256 fee = (amount * feeBps) / FEE_DENOM;
-        uint256 totalRequired = amount + fee;
+        uint256 fee = (msg.value * feeBps) / FEE_DENOM;
 
-        _usdc.safeTransferFrom(msg.sender, address(this), totalRequired);
         if (fee > 0) {
             totalFeesAccrued += fee;
         }
@@ -262,12 +207,11 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     function resolve(
         bytes32 bountyId,
         address recipient
-    ) external nonReentrant whenNotPaused {
+    ) external onlyOwner nonReentrant whenNotPaused {
         if (recipient == address(0)) revert ZeroAddress();
 
         Bounty storage b = _bounties[bountyId];
         if (b.status != Status.Open) revert NotOpen();
-        if (msg.sender != b.resolver) revert NotResolver();
 
         b.status = Status.Resolved;
         uint256 gross = b.amount;
@@ -277,11 +221,11 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
             totalEscrowed -= gross;
         }
 
-        uint256 fee = 0;
-        uint256 net = gross;
+        uint256 fee = (gross * feeBps) / FEE_DENOM;
+        uint256 net = gross - fee;
 
         if (net > 0) {
-            _usdc.safeTransfer(recipient, net);
+            payable(recipient).transfer(net);
         }
 
         emit Resolved(bountyId, recipient, net, fee);
@@ -290,7 +234,6 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     function cancel(bytes32 bountyId) external nonReentrant whenNotPaused {
         Bounty storage b = _bounties[bountyId];
         if (b.status != Status.Open) revert NotOpen();
-        if (msg.sender != b.sponsor) revert NotSponsor();
 
         b.status = Status.Canceled;
         uint256 gross = b.amount;
@@ -298,7 +241,7 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
 
         if (gross > 0) {
             totalEscrowed -= gross;
-            _usdc.safeTransfer(b.sponsor, gross);
+            payable(b.sponsor).transfer(gross);
         }
 
         emit Canceled(bountyId, b.sponsor, gross);
@@ -318,7 +261,7 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
 
         if (gross > 0) {
             totalEscrowed -= gross;
-            _usdc.safeTransfer(b.sponsor, gross);
+            payable(b.sponsor).transfer(gross);
         }
 
         emit Refunded(bountyId, b.sponsor, gross);
@@ -327,12 +270,12 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     // -------- Fees & Vault Logic (Integrated) --------
 
     /**
-     * @notice Returns the amount of USDC currently available as protocol fees.
-     * @dev Computed as contract USDC balance - totalEscrowed. Fees are collected
+     * @notice Returns the amount of currently available protocol fees.
+     * @dev Computed as contract balance - totalEscrowed. Fees are collected
      *      at funding time, so this excludes active bounty principal.
      */
     function availableFees() public view returns (uint256) {
-        uint256 balance = _usdc.balanceOf(address(this));
+        uint256 balance = address(this).balance;
         if (balance <= totalEscrowed) {
             return 0;
         }
@@ -340,7 +283,7 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     }
 
     /**
-     * @notice Withdraw accumulated protocol fees in USDC.
+     * @notice Withdraw accumulated protocol fees.
      * @dev Only owner. Cannot withdraw escrowed funds.
      *      This is allowed even while the contract is paused.
      *
@@ -362,13 +305,13 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
             revert InsufficientFees();
         }
 
-        _usdc.safeTransfer(to, amount);
+        payable(to).transfer(amount);
         emit FeesWithdrawn(to, amount);
     }
 
     /**
-     * @notice Rescue arbitrary ERC-20 tokens (non-USDC) accidentally sent to this contract.
-     * @dev Only owner. Cannot be used for the primary USDC token.
+     * @notice Rescue arbitrary ERC-20 tokens accidentally sent to this contract.
+     * @dev Only owner. Cannot be used for the native token.
      */
     function rescueToken(
         address token,
@@ -377,21 +320,9 @@ contract BountyEscrow is ReentrancyGuard, Pausable, Ownable {
     ) external onlyOwner nonReentrant {
         if (token == address(0) || to == address(0)) revert ZeroAddress();
         if (amount == 0) revert ZeroAmount();
-        if (token == address(_usdc)) revert CannotRescueUsdc();
 
         IERC20(token).safeTransfer(to, amount);
         emit TokenRescued(token, to, amount);
-    }
-
-    // -------- Native ETH Handling (Optional Vault-Style) --------
-
-    function sweepNative(address to) external onlyOwner nonReentrant {
-        if (to == address(0)) revert ZeroAddress();
-        uint256 bal = address(this).balance;
-        if (bal == 0) revert ZeroAmount();
-
-        Address.sendValue(payable(to), bal);
-        emit NativeSwept(to, bal);
     }
 
     receive() external payable {

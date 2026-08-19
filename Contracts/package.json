@@ -16,6 +16,9 @@
   "dependencies": {
     "@openzeppelin/contracts": "^5.3.0",
     "@openzeppelin/contracts-upgradeable": "^5.6.1",
-    "dotenv": "^16.5.0"
+    "@quai/hardhat-deploy-metadata": "^1.0.8",
+    "@quai/quais-upgrades": "^3.8.14",
+    "dotenv": "^16.5.0",
+    "quais": "^1.0.0-alpha.56"
   }
 }
