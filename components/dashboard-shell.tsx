@@ -22,13 +22,19 @@ import {
 
 interface BountyType {
   id: string;
-  org: string;
-  repo: string; 
-  issueNumber: string;
+  org?: string;
+  repo: string;
+  issueNumber?: string;
+  issue?: number;
   title: string;
   description: string;
-  link: string;
-  prize: number;
+  link?: string;
+  prize?: number;
+  reward?: number;
+  skills?: string[];
+  difficulty?: string;
+  status?: string;
+  days?: number;
 }
 
 export type Workspace = 'contributor' | 'maintainer'
@@ -271,15 +277,19 @@ export function BountyCard({
 }: {
   bounty: BountyType
 }) {
+    const prizeAmount = bounty.prize ?? bounty.reward ?? 0
+    const orgName = bounty.org ?? (bounty.repo.includes('/') ? bounty.repo.split('/')[0] : '')
+    const issueNum = bounty.issueNumber ?? String(bounty.issue ?? '')
+    const daysLeft = bounty.days ?? 30
     const queryParams = new URLSearchParams({
-      org: bounty.org,
+      org: orgName,
       repo: bounty.repo,
-      issueNumber: bounty.issueNumber,
+      issueNumber: issueNum,
       title: bounty.title,
       description: bounty.description,
-      status: "open",
-      prize: bounty.prize.toString(),
-      days: "30",
+      status: bounty.status ?? "open",
+      prize: prizeAmount.toString(),
+      days: daysLeft.toString(),
       id: bounty.id
     }).toString()
   return (
@@ -288,9 +298,9 @@ export function BountyCard({
       className="card-hover block rounded-xl border border-border bg-card p-5"
     >
       <div className="flex items-start justify-between gap-3">
-        <StatusBadge status={"open"} />
+        <StatusBadge status={bounty.status ?? "open"} />
         <span className="font-mono text-sm font-semibold text-[#08784d]">
-          {bounty.prize} QUAI
+          {prizeAmount} QUAI
         </span>
       </div>
 
@@ -307,7 +317,7 @@ export function BountyCard({
 
       <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
         <span>
-          {30} days remaining{' '}
+          {daysLeft} days remaining{' '}
           <span className="ml-1 text-foreground">→</span>
         </span>
       </div>
