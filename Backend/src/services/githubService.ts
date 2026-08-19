@@ -51,15 +51,5 @@ async function fetchPrimaryVerifiedEmail(accessToken: string): Promise<string | 
   return primary?.email ?? null;
 }
 
-// --- Usage, continuing directly from your token exchange ---
-//
-// const accessToken = tokenResponse.data.access_token;
-//
-// const githubUser = await fetchGitHubUser(accessToken);
-// console.log(githubUser.id);    // numeric GitHub user ID — stable, never changes, use this as your key
-// console.log(githubUser.login); // username — can change, don't use as a primary key
-//
-// const email = await fetchPrimaryVerifiedEmail(accessToken); // may be null if scope wasn't granted
-
 export { fetchGitHubUser, fetchPrimaryVerifiedEmail };
 export type { GitHubUserResponse, GitHubEmailResponse };
