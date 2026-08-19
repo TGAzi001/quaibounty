@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 // import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
-import scheduleRoutes from './routes/schedule.js';
 import bountyRoutes from './routes/bounty.js';
 import { githubWebhookMiddleware } from './github/app.js';
 
@@ -47,7 +46,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Register routes
 app.use('/', authRoutes);
-app.use('/', scheduleRoutes);
 app.use('/', bountyRoutes);
 
 // Health check endpoint
