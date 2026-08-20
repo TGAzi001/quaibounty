@@ -64,7 +64,9 @@ export function ParticipateDialog({ bounty }: ParticipateDialogProps) {
       const value = quais.parseQuai(trimmedAmount)
 
       const tx = await contract.fund(bountyId, { value })
-      await tx.wait()
+      await tx.wait();
+
+      
 
       setAccepted(true)
     } catch (err) {
