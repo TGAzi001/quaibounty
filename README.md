@@ -1,0 +1,1207 @@
+Absolutely. I checked the Edgency README and I’d use its **structure and level of technical detail** as inspiration, but tailor the README specifically to QuaiBounty and its hackathon/MVP status. The reference README uses sections such as Overview, Problem, Solution, How It Works, Technologies, integration deep dives, setup, screenshots, roadmap, and acknowledgments. ([GitHub][1])
+
+Below is a **GitHub-ready README** you can paste directly into `README.md`.
+
+---
+
+# 🟢 QuaiBounty
+
+### GitHub-native bounties powered by Quai Network
+
+> **Fund the issue. Ship the fix. Get paid.**
+
+QuaiBounty is a GitHub-native bounty and escrow platform that connects **open-source work, programmable on-chain escrow, and automated settlement**.
+
+Maintainers can create and fund bounties for GitHub issues, while contributors can discover funded work and complete it through their normal GitHub workflow.
+
+Once predefined contribution conditions are satisfied, the bounty becomes eligible for settlement and the contributor receives their reward in **QUAI**.
+
+---
+
+## 🚀 Overview
+
+Open-source projects increasingly use paid bounties to attract developers, but the existing process often depends on trust between maintainers and contributors.
+
+A contributor may complete hours or days of work and still have to rely on the maintainer to manually send the promised payment.
+
+QuaiBounty addresses this by introducing an **on-chain escrow layer between GitHub and the payment process**.
+
+The core idea is simple:
+
+```text
+GitHub Issue
+     ↓
+Funded Bounty
+     ↓
+Quai Escrow
+     ↓
+Contributor Works
+     ↓
+GitHub Verification
+     ↓
+Conditions Satisfied
+     ↓
+QUAI Payout
+```
+
+The maintainer commits the reward **before the contributor commits the work**.
+
+---
+
+# 🎯 Problem
+
+Paid open-source work currently has trust gaps on both sides.
+
+### For contributors
+
+A contributor may:
+
+1. Find a paid GitHub issue.
+2. Spend hours or days solving it.
+3. Submit a Pull Request.
+4. Have the work accepted or merged.
+5. Still depend on the maintainer to manually release payment.
+
+There is no guaranteed settlement mechanism.
+
+### For maintainers
+
+Maintainers also face challenges:
+
+* Contributors may abandon a bounty.
+* Submitted work may not satisfy the requirements.
+* Payments have to be handled manually.
+* Managing multiple contributors and payouts can become difficult.
+* Existing bounty platforms can introduce additional centralized processes.
+
+### The core problem
+
+There is no seamless system connecting:
+
+> **GitHub Issue → Funded Reward → Verified Contribution → Automatic Payment**
+
+---
+
+# 💡 Solution
+
+QuaiBounty connects **GitHub activity with programmable on-chain escrow**.
+
+A maintainer creates a bounty, defines the requirements, and funds the reward.
+
+The contributor then completes the work through GitHub.
+
+QuaiBounty tracks the contribution and verifies predefined conditions.
+
+When those conditions are satisfied, the escrow becomes eligible to release the reward.
+
+```text
+Maintainer
+    │
+    │ Create & Fund
+    ▼
+GitHub Bounty
+    │
+    ▼
+Quai Escrow
+    │
+    │ Reward secured
+    ▼
+Contributor
+    │
+    │ Build & Submit PR
+    ▼
+GitHub Verification
+    │
+    │ Conditions satisfied
+    ▼
+Escrow Settlement
+    │
+    ▼
+Contributor receives QUAI
+```
+
+### Core principle
+
+> **The money is committed before the work begins.**
+
+---
+
+# ⚙️ How It Works
+
+## 1. Create a Bounty
+
+A maintainer selects a GitHub repository and issue.
+
+They define:
+
+* Bounty title
+* Description
+* Reward
+* Deadline
+* Skills
+* Completion requirements
+* Verification conditions
+
+---
+
+## 2. Fund the Bounty
+
+The maintainer funds the bounty using QUAI.
+
+The reward is committed to the escrow mechanism before contributors begin the work.
+
+---
+
+## 3. Contributors Discover Bounties
+
+Contributors browse available funded bounties through the QuaiBounty marketplace.
+
+Each bounty displays:
+
+* Repository
+* GitHub issue
+* Reward
+* Difficulty
+* Skills
+* Deadline
+* Requirements
+* Current status
+
+---
+
+## 4. Contributor Accepts the Work
+
+The contributor chooses a bounty and participates.
+
+They then work using their existing GitHub workflow.
+
+No separate development environment is required.
+
+---
+
+## 5. Contributor Submits a Pull Request
+
+The contributor creates a Pull Request linked to the bounty.
+
+The PR becomes part of the verification process.
+
+---
+
+## 6. Contribution Is Verified
+
+QuaiBounty verifies predefined conditions using GitHub activity.
+
+Example conditions:
+
+```text
+✓ Correct repository
+✓ Correct issue
+✓ Pull Request linked
+✓ CI checks passed
+✓ Required approval
+✓ Correct branch
+✓ Pull Request merged
+```
+
+---
+
+## 7. Escrow Releases the Reward
+
+Once all required conditions are satisfied, the bounty becomes eligible for settlement.
+
+The contributor receives the predefined reward in QUAI.
+
+```text
+Verified Contribution
+        ↓
+Escrow Conditions Satisfied
+        ↓
+Settlement
+        ↓
+Contributor Wallet
+```
+
+---
+
+# 🏗️ Architecture
+
+QuaiBounty is designed around four major layers:
+
+```text
+┌───────────────────────────────┐
+│           GitHub              │
+│ Issues • PRs • Reviews • CI   │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│         QuaiBounty             │
+│ Web App + API + Verification  │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│        Quai Network           │
+│     Smart Contract Escrow     │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│       Quai-compatible         │
+│          Wallet               │
+│       / BlipPay               │
+└───────────────────────────────┘
+```
+
+### Architecture principle
+
+**GitHub is the source of contribution activity.**
+
+**Quai is the programmable settlement layer.**
+
+---
+
+# ⛓️ Quai Network Integration
+
+QuaiBounty uses Quai Network as the blockchain layer for:
+
+* Bounty escrow
+* QUAI-denominated rewards
+* Smart-contract settlement
+* On-chain transactions
+* Transparent payment verification
+
+The escrow contract is designed to hold bounty funds and release the reward when the predefined settlement conditions are satisfied.
+
+Quai's EVM compatibility allows QuaiBounty to use Solidity-based smart contracts and familiar Ethereum development tooling.
+
+---
+
+# 💳 BlipPay Integration
+
+BlipPay provides the wallet/payment interface for QuaiBounty users.
+
+### Maintainers
+
+Use their wallet to:
+
+```text
+Connect Wallet
+     ↓
+Fund Bounty
+     ↓
+Escrow
+```
+
+### Contributors
+
+Use their wallet to:
+
+```text
+Connect Payout Wallet
+     ↓
+Complete Bounty
+     ↓
+Receive QUAI
+```
+
+QuaiBounty is designed to remain **wallet-agnostic**, with BlipPay as a key supported wallet option.
+
+---
+
+# 🔐 Escrow Model
+
+The escrow model is the foundation of QuaiBounty.
+
+Instead of:
+
+```text
+Contributor → Work → "Please Pay Me"
+```
+
+QuaiBounty creates:
+
+```text
+Maintainer
+    ↓
+Fund Bounty
+    ↓
+Escrow
+    ↓
+Contributor Works
+    ↓
+GitHub Verification
+    ↓
+Settlement
+    ↓
+Contributor
+```
+
+This reduces reliance on manual payment promises.
+
+### Important
+
+The escrow contract is responsible for **holding and settling funds** according to the configured bounty conditions.
+
+GitHub provides the contribution evidence.
+
+Quai provides the programmable settlement layer.
+
+---
+
+# 👨‍💻 Contributor Experience
+
+Contributors can:
+
+* Sign up with GitHub
+* Connect a payout wallet
+* Browse funded bounties
+* Search and filter opportunities
+* Review bounty requirements
+* Participate in bounties
+* Track Pull Requests
+* Monitor verification
+* View completed work
+* Track earnings
+* Receive QUAI payouts
+
+### Contributor journey
+
+```text
+Signup
+ ↓
+Connect GitHub
+ ↓
+Connect Wallet
+ ↓
+Explore Bounties
+ ↓
+Accept Bounty
+ ↓
+Build
+ ↓
+Submit PR
+ ↓
+Verification
+ ↓
+Payout
+```
+
+---
+
+# 🧑‍💼 Maintainer Experience
+
+Maintainers can:
+
+* Connect GitHub
+* Connect a funding wallet
+* Create bounties
+* Select repositories
+* Link GitHub issues
+* Define requirements
+* Set rewards
+* Fund escrow
+* Review submissions
+* Track verification
+* Monitor payouts
+
+### Maintainer journey
+
+```text
+Signup
+ ↓
+Connect GitHub
+ ↓
+Connect Funding Wallet
+ ↓
+Create Bounty
+ ↓
+Define Requirements
+ ↓
+Fund Escrow
+ ↓
+Publish
+ ↓
+Review Contribution
+ ↓
+Verification
+ ↓
+Settlement
+```
+
+---
+
+# 💰 Business Model
+
+QuaiBounty is free for contributors and maintainers to join.
+
+The platform earns a **2% success fee** from successfully completed bounties.
+
+### Example
+
+```text
+Bounty Reward       1,000 QUAI
+Platform Fee            20 QUAI
+──────────────────────────────
+Total Funding        1,020 QUAI
+
+Contributor receives 1,000 QUAI
+QuaiBounty receives      20 QUAI
+```
+
+### Revenue model
+
+> **Completed Bounty Volume × 2% = Platform Revenue**
+
+This creates a usage-based model where revenue grows with the amount of work processed through the platform.
+
+---
+
+# 📊 Growth Metrics
+
+The key metrics we intend to track include:
+
+| Metric              | Description                             |
+| ------------------- | --------------------------------------- |
+| Bounty Volume       | Total value processed                   |
+| Completed Bounties  | Successfully verified tasks             |
+| Active Contributors | Developers completing bounties          |
+| Active Maintainers  | Projects funding bounties               |
+| Average Bounty      | Average reward per task                 |
+| Completion Rate     | Percentage of funded bounties completed |
+| Repeat Maintainers  | Returning bounty creators               |
+
+---
+
+# 🛠️ Technology Stack
+
+| Technology          | Purpose                              |
+| ------------------- | ------------------------------------ |
+| **Next.js**         | Web application framework            |
+| **TypeScript**      | Type-safe application development    |
+| **Tailwind CSS**    | UI styling                           |
+| **Framer Motion**   | Interface animations                 |
+| **PostgreSQL**      | Application data                     |
+| **GitHub API**      | Repository, issue and PR integration |
+| **GitHub Webhooks** | Contribution event processing        |
+| **Solidity**        | Escrow smart contracts               |
+| **Quai Network**    | Blockchain settlement                |
+| **QUAI**            | Bounty and settlement asset          |
+| **BlipPay**         | Wallet/payment interface             |
+
+---
+
+# 🧩 Core Data Model
+
+The application is structured around several primary entities.
+
+### User
+
+```text
+User
+├── id
+├── name
+├── email
+├── GitHub username
+├── role
+└── wallet
+```
+
+### Bounty
+
+```text
+Bounty
+├── id
+├── repository
+├── issue
+├── title
+├── description
+├── reward
+├── deadline
+├── requirements
+├── status
+└── maintainer
+```
+
+### Submission
+
+```text
+Submission
+├── id
+├── bounty
+├── contributor
+├── pull request
+├── status
+└── verification
+```
+
+### Verification
+
+```text
+Verification
+├── repository
+├── issue
+├── pull request
+├── CI
+├── approval
+├── branch
+└── merge status
+```
+
+### Transaction
+
+```text
+Transaction
+├── type
+├── amount
+├── status
+├── bounty
+├── wallet
+└── transaction hash
+```
+
+---
+
+# 🔄 Bounty State Machine
+
+A bounty moves through defined lifecycle states:
+
+```text
+DRAFT
+  ↓
+FUNDED
+  ↓
+OPEN
+  ↓
+IN_PROGRESS
+  ↓
+PR_SUBMITTED
+  ↓
+VERIFYING
+  ↓
+SUCCESS
+  ↓
+PAID
+```
+
+Exceptional states include:
+
+```text
+CHANGES_REQUESTED
+VERIFICATION_FAILED
+EXPIRED
+DISPUTED
+REFUNDED
+```
+
+This state model allows the frontend, backend, GitHub integration, and escrow contract to maintain a consistent bounty lifecycle.
+
+---
+
+# 🔎 Verification Model
+
+QuaiBounty is designed around predefined completion conditions.
+
+Example:
+
+```text
+Repository verified       ✓
+Issue linked              ✓
+Pull Request verified     ✓
+CI checks passed          ✓
+Required approval         ✓
+Correct branch            ✓
+Pull Request merged       ✓
+```
+
+When all required conditions are satisfied:
+
+```text
+Verification
+     ↓
+PASSED
+     ↓
+Settlement
+     ↓
+Payout
+```
+
+The goal is to minimize subjective payment decisions and make bounty completion as objectively verifiable as possible.
+
+---
+
+# 🖥️ MVP Features
+
+### Landing Page
+
+* Product introduction
+* How QuaiBounty works
+* Problem/solution
+* Platform benefits
+* CTA
+* Authentication
+
+### Authentication
+
+* GitHub signup
+* Google signup
+* Email onboarding
+* Contributor/Maintainer workspace
+
+### Contributor Dashboard
+
+* Available bounties
+* Recommended bounties
+* Active work
+* Submissions
+* Earnings
+* Wallet
+
+### Maintainer Dashboard
+
+* Active bounties
+* Create bounty
+* Funding
+* Submissions
+* Review
+* Transactions
+* Wallet
+
+### Wallet
+
+* BlipPay integration
+* Quai-compatible wallet support
+* Manual wallet address
+* Payout wallet
+* Funding wallet
+
+---
+
+# 🚧 Current MVP Status
+
+QuaiBounty is currently being developed as an MVP.
+
+### Implemented
+
+* [x] Landing page
+* [x] Authentication/onboarding UI
+* [x] Contributor dashboard
+* [x] Maintainer dashboard
+* [x] Bounty marketplace
+* [x] Bounty creation workflow
+* [x] Bounty detail pages
+* [x] Submission tracking UI
+* [x] Verification workflow UI
+* [x] Wallet management UI
+* [x] Contributor/maintainer workspace model
+* [x] 2% platform fee model
+
+### In Progress / Integration Layer
+
+* [ ] GitHub OAuth/API integration
+* [ ] GitHub webhooks
+* [ ] Automated contribution verification
+* [ ] Quai escrow smart contract deployment
+* [ ] On-chain bounty funding
+* [ ] Automated settlement
+* [ ] Production BlipPay integration
+* [ ] Production database/API integration
+
+> **Note:** Features listed as in-progress should not be interpreted as deployed production functionality.
+
+---
+
+# 🗺️ Roadmap
+
+## Phase 1 — MVP
+
+* Dashboard
+* Bounty marketplace
+* Maintainer workflow
+* Contributor workflow
+* Wallet architecture
+* Escrow architecture
+* Quai integration
+
+## Phase 2 — Automation
+
+* GitHub App
+* GitHub webhooks
+* Automated PR verification
+* CI verification
+* Smart-contract settlement
+* BlipPay wallet integration
+
+## Phase 3 — Ecosystem
+
+* Developer reputation
+* Contributor profiles
+* Organization accounts
+* Advanced bounty rules
+* Notifications
+* Dispute resolution
+* Analytics
+
+## Phase 4 — Scale
+
+* Open bounty marketplace
+* Large-scale open-source funding
+* Community bounties
+* DAO/community integrations
+* Additional blockchain/payment integrations
+
+---
+
+# 🎯 Why QuaiBounty?
+
+Existing bounty systems often separate:
+
+**Work**
+
+from
+
+**Verification**
+
+from
+
+**Payment**
+
+QuaiBounty brings them together.
+
+```text
+             GITHUB
+                │
+          Contribution
+                │
+                ▼
+         QUAIBOUNTY
+                │
+          Verification
+                │
+                ▼
+             QUAI
+                │
+             Escrow
+                │
+                ▼
+             PAYOUT
+```
+
+### The result
+
+**Work is visible.**
+
+**Funding is committed.**
+
+**Conditions are verifiable.**
+
+**Settlement is programmable.**
+
+
+# 🏆 Hackathon Focus
+
+QuaiBounty demonstrates how blockchain can solve a practical problem without forcing users to abandon the tools they already use.
+
+Developers continue using **GitHub**.
+
+Maintainers continue managing **repositories and issues**.
+
+Quai provides the missing layer for:
+
+**Escrow + Verification + Settlement**
+
+Our goal is to make blockchain infrastructure nearly invisible to the end user while making the underlying payment guarantees stronger.
+
+---
+
+# 🔮 Future Vision
+
+QuaiBounty starts with GitHub bounties, but the underlying concept is broader.
+
+We envision a world where:
+
+> **Any verifiable piece of digital work can be connected to programmable payment.**
+
+GitHub is our starting point because contribution activity is already structured and observable.
+
+Over time, the same infrastructure can support:
+
+* Open-source development
+* Developer contracts
+* Bug bounties
+* Documentation
+* Design tasks
+* Research
+* Community grants
+* DAO contributions
+* Ecosystem incentives
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+To contribute:
+
+```bash
+git clone <repository-url>
+
+cd quaibounty
+
+npm install
+
+npm run dev
+```
+
+Create a feature branch:
+
+```bash
+git checkout -b feature/your-feature
+```
+
+Make your changes, test them, and submit a Pull Request.
+
+---
+
+# ⚙️ Local Development
+
+### Prerequisites
+
+* Node.js 18+
+* npm / pnpm
+* Git
+* PostgreSQL for backend/database functionality
+
+### Install
+
+```bash
+npm install
+```
+
+or:
+
+```bash
+pnpm install
+```
+
+### Environment Variables
+
+Create:
+
+```text
+.env.local
+```
+
+Example:
+
+```env
+DATABASE_URL=
+
+NEXT_PUBLIC_APP_URL=
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+QUAI_RPC_URL=
+
+QUAI_ESCROW_CONTRACT_ADDRESS=
+
+BLIPPAY_API_URL=
+BLIPPAY_API_KEY=
+```
+
+> Do not commit `.env.local` or private API keys to the repository.
+
+The exact variables should be updated as the corresponding integrations are implemented.
+
+---
+
+# 🧪 Testing
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Build the application:
+
+```bash
+npm run build
+```
+
+Run production locally:
+
+```bash
+npm run start
+```
+
+If the project uses pnpm:
+
+```bash
+pnpm dev
+pnpm build
+pnpm start
+```
+
+---
+
+# 📁 Project Structure
+
+A simplified structure:
+
+```text
+quaibounty/
+│
+├── app/
+│   ├── auth/
+│   ├── dashboard/
+│   │   ├── bounties/
+│   │   ├── submissions/
+│   │   ├── earnings/
+│   │   ├── wallet/
+│   │   └── settings/
+│   │
+│   └── ...
+│
+├── components/
+│   ├── ui/
+│   ├── dashboard/
+│   ├── bounty/
+│   ├── github/
+│   ├── verification/
+│   └── wallet/
+│
+├── lib/
+│   ├── services/
+│   ├── mock-data/
+│   ├── utils/
+│   └── validations/
+│
+├── types/
+│   ├── bounty.ts
+│   ├── user.ts
+│   ├── wallet.ts
+│   ├── submission.ts
+│   ├── verification.ts
+│   └── transaction.ts
+│
+├── public/
+│
+├── package.json
+└── README.md
+```
+
+The exact structure may evolve as the backend and smart-contract infrastructure are integrated.
+
+---
+
+# 🔐 Security Considerations
+
+Because QuaiBounty handles financial settlement, security is a core requirement.
+
+Future production implementation will include:
+
+* Audited escrow contracts
+* Strict contract access control
+* GitHub webhook signature verification
+* Server-side validation
+* Wallet ownership verification
+* Transaction confirmation checks
+* Replay protection
+* Secure environment variables
+* Rate limiting
+* Input validation
+* Comprehensive contract testing
+
+**The MVP should not be treated as production financial infrastructure until smart contracts and payment flows have been independently tested and audited.**
+
+---
+
+# 📜 Smart Contract Status
+
+The escrow contract is part of the QuaiBounty architecture.
+
+The intended contract responsibilities include:
+
+```text
+Create Escrow
+      ↓
+Deposit Bounty
+      ↓
+Lock Funds
+      ↓
+Track Settlement State
+      ↓
+Release Reward
+      ↓
+Record Settlement
+```
+
+### Contract Address
+
+**Not yet deployed / update after deployment.**
+
+```text
+Escrow Contract:
+TBD
+```
+
+### Quai Explorer
+
+**TBD after deployment.**
+
+---
+
+# 📸 Screenshots
+
+Add screenshots of the main product interfaces here as they become available.
+
+Recommended screenshots:
+
+1. Landing page
+2. Contributor dashboard
+3. Bounty marketplace
+4. Bounty details
+5. Maintainer dashboard
+6. Create bounty
+7. Submission verification
+8. Wallet
+9. Successful payout
+
+Example:
+
+```markdown
+## Screenshots
+
+### Contributor Dashboard
+
+![Contributor Dashboard](./docs/screenshots/contributor-dashboard.png)
+
+### Bounty Marketplace
+
+![Bounty Marketplace](./docs/screenshots/bounty-marketplace.png)
+
+### Maintainer Dashboard
+
+![Maintainer Dashboard](./docs/screenshots/maintainer-dashboard.png)
+```
+
+---
+
+# 🌐 Product Flow
+
+The complete product can be summarized as:
+
+```text
+                 MAINTAINER
+                     │
+                     ▼
+              Create Bounty
+                     │
+                     ▼
+               Fund Escrow
+                     │
+                     ▼
+              ┌─────────────┐
+              │   GitHub    │
+              │    Issue    │
+              └──────┬──────┘
+                     │
+                     ▼
+                CONTRIBUTORS
+                     │
+                     ▼
+                Write Code
+                     │
+                     ▼
+                 Submit PR
+                     │
+                     ▼
+             GitHub Verification
+                     │
+              ┌──────┴──────┐
+              │             │
+           FAILED         PASSED
+              │             │
+              ▼             ▼
+         Fix / Retry      Escrow
+                            │
+                            ▼
+                       QUAI Payout
+                            │
+                            ▼
+                       CONTRIBUTOR
+```
+
+---
+
+# 💚 Built for the Open-Source Economy
+
+QuaiBounty is built around a simple belief:
+
+> **Contributors should not have to trust that they'll be paid after the work is done.**
+
+The reward should already be committed.
+
+The requirements should be clear.
+
+The work should be verifiable.
+
+And the settlement should be programmable.
+
+### **Fund the issue. Ship the fix. Get paid.**
+
+---
+
+# 👥 Team
+
+**QuaiBounty Team**
+
+Building the infrastructure that connects **GitHub contribution → verified work → programmable payment** on Quai Network.
+
+---
+
+# 🙏 Acknowledgments
+
+Built for the **Quai Network ecosystem and hackathon community**.
+
+Special thanks to the teams and open-source communities building the infrastructure that makes decentralized development possible.
+
+---
+
+## 🔗 Links
+
+* **Website:** Add your deployed QuaiBounty URL
+* **GitHub:** Add repository URL
+* **X/Twitter:** Add QuaiBounty X account
+* **Quai Network:** Add official Quai link
+* **BlipPay:** Add official BlipPay link
+* **Demo:** Add demo video
+* **Pitch Deck:** Add deck link
+
+---
+
+# 📄 License
+
+Add the project's chosen license here, for example:
+
+```text
+MIT License
+```
+
+---
+
+### One recommendation before you commit this
+
+Because this README is for a **hackathon project**, I would keep the distinction between **“built,” “implemented,” and “planned”** extremely clear. The Edgency README goes deep into implementation details because it documents a functioning technical system. ([GitHub][1])
+
+For QuaiBounty, the strongest README will be the one that lets a judge quickly see:
+
+**Problem → Solution → Architecture → Quai Integration → What Actually Works → What's Next**
+
+rather than making the MVP look more complete than it is.
