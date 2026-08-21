@@ -680,7 +680,7 @@ export function Footer() {
           </h2>
           <p className="mx-auto mt-5 max-w-xl leading-8 text-[#667085]">
             Discover funded issues, build meaningful software, and get paid
-            through Quai.
+            through Quai
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button href="./bounties">Explore bounties</Button>
