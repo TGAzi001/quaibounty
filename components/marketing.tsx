@@ -380,7 +380,7 @@ export function Roles() {
             </div>
             <Button
               className="mt-8"
-              href={tab === "contributors" ? "#bounties" : "/auth/sign-up"}
+              href={tab === "contributors" ? "#bounties" : "https://github.com/apps/quaibounty"}
             >
               {data.cta}
               <ArrowRight size={15} />
@@ -684,8 +684,8 @@ export function Footer() {
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button href="./bounties">Explore bounties</Button>
-            <Button href="/auth/sign-up" variant="dark">
-              Get started <ArrowRight size={15} />
+            <Button href="https://github.com/apps/quaibounty" variant="dark">
+              Install App <ArrowRight size={15} />
             </Button>
           </div>
         </div>
