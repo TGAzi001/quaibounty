@@ -66,7 +66,25 @@ export function ParticipateDialog({ bounty }: ParticipateDialogProps) {
       const tx = await contract.fund(bountyId, { value })
       await tx.wait();
 
-      
+      // Sync the funded amount to Firestore now that the on-chain tx is confirmed
+      const fundRes = await fetch(
+        'https://quaibounty.up.railway.app/api/fund',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: parsedAmount,
+            bountyId,
+          }),
+        }
+      )
+
+      if (!fundRes.ok) {
+        const errData = await fundRes.json().catch(() => null)
+        throw new Error(errData?.error ?? 'On-chain funding succeeded, but updating the bounty record failed.')
+      }
 
       setAccepted(true)
     } catch (err) {

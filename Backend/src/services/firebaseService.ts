@@ -90,7 +90,7 @@ import {
         }
 
         const doc = snapshot.docs[0];
-        return { id: doc.id, ...doc.data() } as T;
+        return { bid: doc.id, ...doc.data() } as T;
       } catch (error) {
         throw new Error(`Failed to get document by ${fieldName} from ${collectionName}: ${error}`);
       }
