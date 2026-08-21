@@ -133,8 +133,8 @@ export function Hero() {
             developers through Quai.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button href="/auth/sign-up">
-              Get started <ArrowRight size={16} />
+            <Button href="https://github.com/apps/quaibounty">
+              Install App <ArrowRight size={16} />
             </Button>
             <Button href="./bounties" variant="secondary">
               Explore bounties
