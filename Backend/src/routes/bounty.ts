@@ -23,6 +23,24 @@ router.get('/api/bounties', async (req, res) => {
 
 // router.post('/api/bounties', async (req, res) => {
 
+//     const { amount } = req.body;
+//     const bountyDoc = await firebaseService.getDocument('bounties', userId);
+//     if (userDoc) {
+//         console.log(`user ${userId} sign in`);
+        
+//     await firebaseService.updateDocument('users', userId, {
+//         'connectedAccounts.github': {
+//             accessToken
+//         },
+//         updatedAt: new Date()
+//     });
+
+//     await firebaseService.updateDocument('users', userId, {
+//         'profile.x': {
+//             avatarUrl
+//         }
+//     });  
+
 //     try {
 //         const bounties = await firebaseService.getAllDocuments<bountySchema>('bounties');
 

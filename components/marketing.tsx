@@ -18,6 +18,8 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { bounties, faqs } from "@/lib/mock-data";
+import { ConnectWalletButton } from '@/components/connect-wallet-button'
+import { LinkGithubButton } from '@/components/get-started-button'
 
 const Logo = ({ light = false }: { light?: boolean }) => (
   <Link
@@ -70,12 +72,8 @@ export function Navbar() {
           ))}
         </nav>
         <div className="hidden items-center gap-3 sm:flex">
-          <Link href="/auth/sign-in" className="nav-link px-2">
-            Sign in
-          </Link>
-          <Button href="/auth/sign-up">
-            Get started <ArrowRight size={15} />
-          </Button>
+          <ConnectWalletButton />
+          <LinkGithubButton />
         </div>
         <button
           aria-label={open ? "Close menu" : "Open menu"}
@@ -102,12 +100,7 @@ export function Navbar() {
             </a>
           ))}
           <div className="flex gap-3 pt-4">
-            <Link
-              href="/auth/sign-in"
-              className="flex-1 rounded-lg border px-4 py-2.5 text-center text-sm font-semibold"
-            >
-              Sign in
-            </Link>
+            <ConnectWalletButton />
             <Button className="flex-1" href="/auth/sign-up">
               Get started
             </Button>
@@ -690,7 +683,7 @@ export function Footer() {
             through Quai.
           </p>
           <div className="mt-8 flex justify-center gap-3">
-            <Button href="#bounties">Explore bounties</Button>
+            <Button href="./bounties">Explore bounties</Button>
             <Button href="/auth/sign-up" variant="dark">
               Get started <ArrowRight size={15} />
             </Button>
@@ -711,7 +704,6 @@ export function Footer() {
             <a href="#roles">Contributors</a>
             <a href="#roles">Maintainers</a>
             <a href="#faq">FAQ</a>
-            <a href="/auth/sign-in">Sign in</a>
           </div>
         </div>
         <div className="mx-auto max-w-7xl border-t border-[#23473b] px-4 py-5 text-xs text-[#667a72] sm:px-6 lg:px-8">

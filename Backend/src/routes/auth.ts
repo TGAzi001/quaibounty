@@ -74,7 +74,7 @@ router.post('/api/auth/github', async (req, res) => {
         const clientId = process.env.GITHUB_CLIENT_ID!;
         const redirectUri = process.env.GITHUB_REDIRECT_URI!;
         const scope = 'repo read:user user:email';
-        const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&state=${state}`;
+        const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent("https://quaibounty.up.railway.app/api/auth/callback/github")}&scope=${encodeURIComponent(scope)}&state=${state}`;
 
         // Return JSON response instead of redirecting
         res.json({

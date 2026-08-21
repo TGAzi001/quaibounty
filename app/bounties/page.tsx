@@ -40,11 +40,9 @@ export default function BountiesPage() {
         setError(null)
 
         const response = await fetch(
-          'https://80b5-102-91-78-161.ngrok-free.app/api/bounties',
+          'https://quaibounty.up.railway.app/api/bounties',
           {
             headers: {
-              // Bypasses the ngrok interstitial browser warning screen
-              'ngrok-skip-browser-warning': 'true',
               'Content-Type': 'application/json',
             },
           }
